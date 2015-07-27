@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>计划任务管理</title>
+    <script src="/js/jquery-2.1.1.js"></script>
+     <script src="/js/common.js"></script>
+    <script type="text/javascript">
+
+      $(function(){
+        getlist();
+        loadtime();
+        //changetype();
+      })
+      function getlist(){
+         $.ajax({
+                url:'/tasklist',
+                type:'post',
+                data:{
+                  dbname:'12311'
+                },
+                success:function(obj){
+                    var data = eval("("+ obj.data +")");
+                    var html ="<tr>";
+                    for(var key in data){
+                          html += "<td>" + data[key].name + "</td>";
+                          html += "<td>" + data[key].worktime + "</td>";
+                          html += "<td>" + data[key].state + "</td>";
+                          html += "<td>" + data[key].datetype +"</td>";
+                          html += "</tr>";
+                    }
+
+                    $("#tb").append(html);
+                }
+               })
+      }
+
+      function loadtime(){
+        var htmlhour="";
+        var htmlminute="";
+        var htmlsecond="";
+        for(var i=0;i<24;i++){
+          if(i<10){
+            htmlhour +="<option value ="+i+">0"+i+"</option>";
+          }else{
+             htmlhour +="<option value ="+i+">"+i+"</option>";
+          }
+        }
+        $("#selhour").append(htmlhour);
+        for(var i=0;i<60;i++){
+          if(i<10){
+            htmlminute +="<option value ="+i+">0"+i+"</option>";
+          }else{
+             htmlminute +="<option value ="+i+">"+i+"</option>";
+          }
+        }
+        $("#selminute").append(htmlminute);
+        for(var i=1;i<60;i++){
+          if(i<10){
+            htmlsecond +="<option value ="+i+">0"+i+"</option>";
+          }else{
+             htmlsecond +="<option value ="+i+">"+i+"</option>";
+          }
+        }
+        $("#selsecond").append(htmlsecond);
+      }
+
+      function submit(){
+        var name = $("#txtname").val();
+        var ip = $("#txtip").val();
+        var route = $("#txtroute").val();
+        var datetype = $("#seldatetype option:selected").val();
+        var posttype = $("#selposttype option:selected").val();
+        var datepost = $("#txtpost").val();
+        var worktime = gettime();
+        alert(worktime);
+         var jobid = String.uuid();
+         var data = {
+            "name":name,
+            "url": ip + route,
+            "type":posttype,
+            "data":{},//datepost,
+            "worktime":worktime,
+            "state": '1',
+            "datetype":datetype
+          };
+            $.ajax({
+              url: '/insertjob',
+              type:'post',
+              data: data,
+              success:function(obj){
+                alert(obj);
+              }
+            });
+      }
+
+      function changeposttype(){
+         var posttype = $("#selposttype option:selected").val();
+         if(posttype=="get"){
+          $("#txtpost").attr("disabled",true);
+         }
+         else{
+           $("#txtpost").attr("disabled",false);
+         }
+      }
+
+       function gettime(){
+          var datetype = $("#seldatetype option:selected").val();
+          var year = $("#selyear").val();
+          var months = $("#txtmonths").val();
+          var dates = $("#txdates").val();
+          var hour = $("#selhour").val();
+          var minute = $("#selminute").val();
+          var second = $("#selsecond").val();
+          var worktime="";
+            if(datetype=="year"){
+
+            }
+            else if(datetype=="month"){
+
+            }
+            else if(datetype=="dayofweek"){
+            var weekday="";
+            $("input:checkbox[name='checkbox']:checked").each(function(i){
+                weekday += $(this).val() +",";
+            });
+            weekday = weekday.substring(0,weekday.lastIndexOf(","));
+            worktime ="["+ weekday +"]:"+ hour + ":" + minute +":"+ second;
+            }
+            else if(datetype=="hour"){
+              worktime = hour+":"+minute+":"+ second;
+            }
+            else if(datetype=="minute"){
+              worktime = minute+":"+ second;
+            }
+            else if(datetype=="second"){
+               worktime = second;
+            }
+            return worktime;
+       }
+      function changedatetype(){
+       
+      }
+    </script>
+  </head>
+  <body>
+   <table id="tb">
+   <th><td>任务名</td><td>执行时间</td><td>状态</td><td>执行类型</td></th>
+   </table>
+
+   <table>
+    <tr><td>时间规则</td><td>
+      <select id="seldatetype" onchange="changedatetype()">
+        <option value ="year">每年</option>
+        <option value ="month">每月</option>
+        <option value ="dayofweek">每周</option>
+        <option value="hour">每小时</option>
+        <option value="minute">每分钟</option>
+        <option value="second">每秒</option>
+      </select></td></tr>
+   <tr><td>年</td><td>
+     <select id="selyear">
+      <option value ="2015">2015</option>
+      <option value ="2016">2016</option>
+      <option value ="2017">2017</option>
+      <option value ="2018">2018</option>
+      <option value ="2019">2019</option>
+    </select></td>
+<td>月</td><td><input type="text" id="txtmonths"/></td>
+<td>日</td><td><input type="text" id="txdates"/></td></td>
+<td>周</td><td>星期天<input type="checkbox" name="checkbox" value="0" >
+星期一<input type="checkbox" name="checkbox" value="1" />
+星期二<input type="checkbox" name="checkbox" value="2" />
+星期三<input type="checkbox" name="checkbox" value="3" />
+星期四<input type="checkbox" name="checkbox" value="4" />
+星期五<input type="checkbox" name="checkbox" value="5" />
+星期六<input type="checkbox" name="checkbox" value="6" />
+</td>
+<td>时</td ><td><select id="selhour">
+ 
+</select></td>
+<td>分</td><td ><select id="selminute">
+ 
+</select></td>
+<td>秒</td><td><select id="selsecond">
+ 
+</select></td>
+
+</tr>
+
+      <tr><td>任务名</td><td><input type="text" id="txtname"></td></tr>
+      <tr><td>IP</td><td><input type="text" id="txtip"/></td></tr>
+      <tr><td>路由</td><td><input type="text" id="txtroute"/></td></tr>
+      <tr><td>请求类型</td><td> <select id="selposttype" onchange="changeposttype();">
+      <option value ="get">get</option>
+      <option value ="post">post</option>
+      </select></td></tr>
+      <tr><td>post数据</td><td><textarea  style="height: 50xp" id="txtpost"></textarea></td> </tr>
+  
+  
+   </table>
+<div><input type="button" onclick="submit();" value="提交"></div>
+<!--     <table>
+<tr>
+<td>年<input type="number" id="txtyear"/></td>
+<td>月<input type="number" id="txtmonth"/></td>
+<td>日<input type="number" id="txtdate"/></td>
+<td>时<input type="number" id="txthour"/></td>
+<td>分<input type="number" id="txtminute"/></td>
+<td>秒<input type="number" id="txtsecond"/></td>
+</tr> </table> -->
+  </body>
+</html>

@@ -1,0 +1,37 @@
+#!/bin/bash
+# by Furple 20150330
+
+startnode()
+{
+	nowdate=`date +"%Y%m%d%H%M%S"`
+	mv nohup.out nohup$nowdate.out
+
+	nohup node bin/www & >nohup.out
+
+	ps -ef|grep bin/www|grep node|awk '{print $1,$2,$8,$9}'
+
+	newnodepid=`ps -ef|grep bin/www|grep node|awk '{print $2}'`
+
+	if [ ! $newnodepid ]; then
+		echo ' service start fail !'
+	else
+		echo ' Service starts successfully !'
+	fi
+}
+
+nodepid=`ps -ef|grep bin/www|grep node|awk '{print $2}'`
+
+if [ !  $nodepid ]; then
+	echo " node not start..."
+	startnode
+else
+	kill -9 $nodepid
+	knodepid=`ps -ef|grep bin/www|grep node|awk '{print $2}'`
+	if [ ! $knodepid ]; then
+
+   		echo " kill $nodepid successfully !"	
+		startnode
+	else
+   		echo " kill $nodepid fail !"
+	fi
+fi

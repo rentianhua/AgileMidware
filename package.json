@@ -1,0 +1,31 @@
+{
+  "name": "nodejs-demo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "cookie-parser": "*",
+    "debug": "*",
+    "ejs": "*",
+    "express": "*",
+    "morgan": "*",
+    "serve-favicon": "*",
+    "amqp":"*",
+    "mysql": "*",
+    "node-schedule": "*",
+    "webworker-threads":"*",
+    "request":"*",
+    "log4js": "*",
+    "redis": "*",
+    "tcp.io": "*",
+    "node-schedule": "*",
+    "express-autoroute": "*",
+    "uuid": "*",
+    "iconv-lite":"*",
+    "mysql-queues":"*",
+    "winston":"*"
+  }
+}

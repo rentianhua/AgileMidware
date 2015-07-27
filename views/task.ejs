@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>计划任务管理</title>
+    <script src="/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript">
+       $(function(){
+	     $.ajax({
+	     	url:'/tasklist',
+	     	type:'psot',
+	     	date:{
+	     		dbname:'12311'
+	     	},
+	     	success:function(err,value){
+                alert(value);
+	     	}
+
+	     })
+       });
+
+
+    </script>
+  </head>
+  <body>
+   <div><%=data%></div>
+  </body>
+</html>
